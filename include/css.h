@@ -1,5 +1,5 @@
 /*
-dualETH Ethernet ArtNet Node 
+dualETH Ethernet ArtNet Node
 
 Base Code Copyright (c) 2016, Matthew Tong
 https://github.com/mtongnz/
