@@ -108,7 +108,7 @@ void portSetup() {
   if (deviceSettings.portBmode == TYPE_DMX_OUT || deviceSettings.portBmode == TYPE_RDM_OUT) {
     setStatusLed(STATUS_LED_B, BLUE);
 
-    dmxB.begin(0, artRDM.getDMX(portB[0], portB[1]));
+    dmxB.begin(DMX_DIR_B, artRDM.getDMX(portB[0], portB[1]));
     if (deviceSettings.portBmode == TYPE_RDM_OUT && !dmxB.rdmEnabled()) {
       dmxB.rdmEnable(ESTA_MAN, ESTA_DEV);
       dmxB.rdmSetCallBack(rdmReceivedB);
