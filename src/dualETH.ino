@@ -69,6 +69,7 @@ extern "C" {
 #define STATUS_DIM 0x04
 
 #define ETHERNET_CS 5
+#define ETHERNET_RST 0
 
 byte mac[6] = {
   0xBC, 0xFF, 0x4D, 0x45, 0x61, 0x0D
@@ -110,6 +111,8 @@ void setup(void) {
   digitalWrite(STATUS_LED_PIN, LOW);
   delay(10);
 
+  Ethernet.setRstPin(ETHERNET_RST);
+  Ethernet.hardreset();
   Ethernet.init(ETHERNET_CS);
 
   setStatusLed(STATUS_LED_S, CYAN);
