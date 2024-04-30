@@ -17,7 +17,7 @@ If not, see http://www.gnu.org/licenses/
 */
 
 #include <SPI.h>
-#include <EthernetLarge.h>
+#include <Ethernet.h>
 #include <EthernetWebServer.h>
 #include <ArduinoJson.h>
 #include <EEPROM.h>
