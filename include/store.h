@@ -1,5 +1,5 @@
 /*
-dualETH Ethernet ArtNet Node 
+dualETH Ethernet ArtNet Node
 
 Base Code Copyright (c) 2016, Matthew Tong
 https://github.com/mtongnz/
@@ -55,7 +55,7 @@ struct StoreStruct {
   uint8_t portApixMode, portBpixMode;
   uint16_t portApixFXstart, portBpixFXstart;
   uint8_t resetCounter, wdtCounter;
-  
+
 } deviceSettings = {
   CONFIG_VERSION,
   IPAddress(10, 0, 0, 1), IPAddress(255, 0, 0, 0), IPAddress(10, 0, 0, 1), IPAddress(255, 0, 0, 0), IPAddress(10, 0, 0, 1), IPAddress(255, 0, 0, 0), IPAddress(255, 255, 255, 255), IPAddress(255, 255, 255, 255),
@@ -75,7 +75,7 @@ struct StoreStruct {
 void eepromSave() {
   for (uint16_t t = 0; t < sizeof(deviceSettings); t++)
     EEPROM.write(CONFIG_START + t, *((char*)&deviceSettings + t));
-  
+
   EEPROM.commit();
 }
 
@@ -86,10 +86,10 @@ void eepromLoad() {
 
     StoreStruct tmpStore;
     tmpStore = deviceSettings;
-    
+
     for (uint16_t t = 0; t < sizeof(deviceSettings); t++)
       *((char*)&deviceSettings + t) = EEPROM.read(CONFIG_START + t);
-    
+
     if (deviceSettings.resetCounter >= 5 || deviceSettings.wdtCounter >= 10) {
       deviceSettings.wdtCounter = 0;
       deviceSettings.resetCounter = 0;
@@ -100,7 +100,7 @@ void eepromLoad() {
   } else {
     eepromSave();
     delay(500);
-    
+
     ESP.eraseConfig();
     while(1);
   }

@@ -1,5 +1,5 @@
 /*
-dualETH Ethernet ArtNet Node 
+dualETH Ethernet ArtNet Node
 
 Base Code Copyright (c) 2016, Matthew Tong
 https://github.com/mtongnz/
@@ -53,7 +53,7 @@ static unsigned long rdmTimer = 0;
 void ICACHE_RAM_ATTR dmx_interrupt_handler(void) {
   // stop other interrupts for TX
   noInterrupts();
-  
+
   if(U0IS & (1 << UIFE)) {    // TX0 Fifo Empty
     U0IC = (1 << UIFE);       // clear status flag
     dmxA._transmit();
@@ -83,17 +83,17 @@ void ICACHE_RAM_ATTR dmx_interrupt_handler(void) {
 
   // DMX input
   } else if (dmx_input) {
-    
+
     // Data received
     while (U0IS & (1 << UIFF)) {
       if (rxUser == 0)
         dmxA.dmxReceived((uint8_t)USF(0));
       else
         dmxB.dmxReceived((uint8_t)USF(0));
-      
+
       U0IC = (1 << UIFF);   // Clear interrupt
     }
-  
+
     // Break/Frame error detect
     if ((U0IS & (1 << UIBD)) || ( U0IS & (1 << UIFR))) {    // RX0 Break Detect
       U0IC = (1 << UIBD) | (1 << UIFR);                     // clear status flags
@@ -150,7 +150,7 @@ void dmx_interrupt_enable(dmx_t* dmx) {
       USD(1) = (ESP8266_CLOCK / DMX_TX_BAUD);
       USC0(1) = DMX_TX_CONF;
     }
-    
+
     // Attach out interupt handler function
     ETS_UART_INTR_ATTACH(&dmx_interrupt_handler, NULL);
 
@@ -177,7 +177,7 @@ void dmx_interrupt_arm(dmx_t* dmx) {
 
   // Clear all interupt bits
   USIC(dmx->dmx_nr) = 0xffff;
-  
+
   // Enable TX Fifo Empty Interupt
   USIE(dmx->dmx_nr) |= (1 << UIFE);
 }
@@ -192,7 +192,7 @@ void dmx_interrupt_disarm(dmx_t* dmx) {
 void rdm_interrupt_arm(dmx_t* dmx) {
   if(dmx == 0 || dmx->state == DMX_NOT_INIT)
       return;
-  
+
   // Enable RX Fifo Full & Break Detect & Frame Error Interupts
   USIE(0) |= (1 << UIFF) | (1 << UIBD) | (1 << UIFR);
 
@@ -229,7 +229,7 @@ void dmx_set_baudrate(dmx_t* dmx, int baud_rate) {
 void dmx_clear_buffer(dmx_t* dmx) {
   for (int i = 0; i < 512; i++)
     dmx->data[i] = 0;
-  
+
   dmx->numChans = DMX_MIN_CHANS;
 }
 
@@ -291,7 +291,7 @@ void dmx_uninit(dmx_t* dmx) {
 
     dmx->isInput = false;
     dmx->inputCallBack = NULL;
-  
+
     if (dmx->ownBuffer)
       os_free(dmx->data);
 }
@@ -326,7 +326,7 @@ void dmx_set_chans(dmx_t* dmx, uint8_t* data, uint16_t num, uint16_t start) {
     // If we receive tiny data input, just output minimum channels
     if (newNum < DMX_MIN_CHANS)
       newNum = DMX_MIN_CHANS;
-      
+
     // Put data into our buffer
     memcpy(&(dmx->data[start-1]), data, num);
 
@@ -356,7 +356,7 @@ void dmx_buffer_update(dmx_t* dmx, uint16_t num) {
   // If we receive tiny data input, just output minimum channels
   if (num < DMX_MIN_CHANS)
     num = DMX_MIN_CHANS;
-      
+
   if (num > dmx->numChans)
     dmx->numChans = (num > 512) ? 512 : num;
 
@@ -375,7 +375,7 @@ espDMX::~espDMX(void) {
 void espDMX::begin(uint8_t dir, byte* buf) {
   if(_dmx == 0) {
     _dmx = (dmx_t*) os_malloc(sizeof(dmx_t));
-    
+
     if(_dmx == 0) {
       os_free(_dmx);
       _dmx = 0;
@@ -389,7 +389,7 @@ void espDMX::begin(uint8_t dir, byte* buf) {
 
     system_set_os_print(0);
     ets_install_putc1(&uart_ignore_char);
-    
+
     // Initialize variables
     _dmx->dmx_nr = _dmx_nr;
     _dmx->txPin = (_dmx->dmx_nr == 0) ? 1 : 2;
@@ -499,13 +499,13 @@ void espDMX::ledIntensity(uint8_t newIntensity) {
 }
 
 void ICACHE_RAM_ATTR espDMX::_transmit(void) {
-  
+
   // If we have data to transmit
   if (_dmx->txChan < _dmx->txSize) {
-    
+
     // Keep the number of bytes sent low to keep it quick
 //    uint16_t txSize = dmx->txSize - dmx->txChan;
-//    txSize = (txSize > DMX_MAX_BYTES_PER_INT) ? DMX_MAX_BYTES_PER_INT : txSize;      
+//    txSize = (txSize > DMX_MAX_BYTES_PER_INT) ? DMX_MAX_BYTES_PER_INT : txSize;
 
 //    for(; txSize; --txSize)
       USF(_dmx->dmx_nr) = _dmx->data1[_dmx->txChan++];
@@ -523,7 +523,7 @@ void ICACHE_RAM_ATTR espDMX::_transmit(void) {
       _dmx->state = DMX_STOP;
 
     } else if (!rdm_pause) { // if (_dmx->state == RDM_TX) {
-      
+
       _dmx->state = RDM_RX;
       rdm_interrupt_arm(_dmx);
     }
@@ -548,10 +548,10 @@ bool espDMX::rdmSendCommand(rdm_data* data) {
   data->buffer[packetLength + 1] = checkSum & 0xFF;
 
   bool r = _dmx->rdm_queue.push(data);
-  
+
   return r;
 }
-        
+
 bool espDMX::rdmSendCommand(uint8_t cmdClass, uint16_t pid, uint16_t manID, uint32_t devID, byte* data, uint16_t dataLength, uint16_t subDev) {
   if (_dmx == 0 || !_dmx->rdm_enable)
     return false;
@@ -560,7 +560,7 @@ bool espDMX::rdmSendCommand(uint8_t cmdClass, uint16_t pid, uint16_t manID, uint
 
   // Note that all ints are stored little endian so we need to flip them
   // to get correct byte order
-  
+
   command.packet.StartCode = (E120_SC_RDM << 8) | E120_SC_SUB_MESSAGE;
   command.packet.Length = 24 + dataLength;
   command.packet.DestMan = manID;
@@ -584,7 +584,7 @@ void espDMX::rdmReceived() {
   if (_dmx == 0 || _dmx->state != RDM_RX)
     return;
 
-  while((USS(0) >> USRXC) & 0x7F) {  
+  while((USS(0) >> USRXC) & 0x7F) {
     _dmx->rdm_response.buffer[_dmx->rx_pos] = USF(0);
 
     // Handle multiple 0xFE to start discovery response
@@ -618,20 +618,20 @@ void espDMX::rdmReceived() {
 void espDMX::rdmDiscovery(uint8_t discType) {
   if (!_dmx || !_dmx->rdm_enable)
     return;
-  
+
   if (discType == RDM_DISCOVERY_TOD_WIPE) {
     _dmx->tod_size = 0;
-      
+
     _dmx->todManID = (uint16_t*)realloc(_dmx->todManID, 0);
     _dmx->todDevID = (uint32_t*)realloc(_dmx->todDevID, 0);
 
     _dmx->tod_status = RDM_TOD_NOT_READY;
-    
+
     discType = RDM_DISCOVERY_FULL;
   }
 
   byte startEnd[12] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-    
+
   if (discType == RDM_DISCOVERY_FULL) {
     _dmx->tod_changed = true;
     rdmSendCommand(E120_DISCOVERY_COMMAND, E120_DISC_UN_MUTE, 0xFFFF, 0xFFFFFFFF);
@@ -652,7 +652,7 @@ void espDMX::rdmDiscoveryResponse(rdm_data* c) {
   // If we received nothing, branch is empty
   if (_dmx->rx_pos == 0) {
     byte a[12] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-    
+
     // If it's a reply to the top branch, all devices are found
     if (memcmp(c->packet.Data, a, 12) == 0) {
 
@@ -669,10 +669,10 @@ void espDMX::rdmDiscoveryResponse(rdm_data* c) {
       // Issue un-mute to all so no devices hide on the next incremental discovery
       rdmSendCommand(E120_DISCOVERY_COMMAND, E120_DISC_UN_MUTE, 0xFFFF, 0xFFFFFFFF);
     }
-    
+
     return;
   }
-  
+
   // Check for correct length & no frame errors
   if (_dmx->rdm_response.discovery.headerFE == 0xFE && _dmx->rdm_response.discovery.headerAA == 0xAA) {
     uint16_t _manID;
@@ -699,11 +699,11 @@ void espDMX::rdmDiscoveryResponse(rdm_data* c) {
     if (checkSum == mChk) {
       // Send mute command to check device is there & to mute from further discovery requests
       rdmSendCommand(E120_DISCOVERY_COMMAND, E120_DISC_MUTE, _manID, _devID);
-      
+
       // Recheck the branch
       c->packet.TransNo = _dmx->rdm_trans_no++;
       rdmSendCommand(c);
-      
+
       return;
     }
   }
@@ -717,7 +717,7 @@ void espDMX::rdmDiscoveryResponse(rdm_data* c) {
   // Get current end address
   for (uint8_t x = 6; x < 12; x++)
     e = (e << 8) | c->packet.Data[x];
-  
+
   // Calculate the midpoint & midpoint + 1
   e = e << 16;
   m = e >> 1;
@@ -727,10 +727,10 @@ void espDMX::rdmDiscoveryResponse(rdm_data* c) {
   if (n == e) {
     uint16_t a = __builtin_bswap16(e >> 32);
     uint32_t b = __builtin_bswap32(e & 0xFFFFFFFF);
-    
+
     // Send mute command to check device is there & to mute from further discovery requests
     rdmSendCommand(E120_DISCOVERY_COMMAND, E120_DISC_MUTE, a, b);
-    
+
     return;
   }
 
@@ -738,7 +738,7 @@ void espDMX::rdmDiscoveryResponse(rdm_data* c) {
   m = __builtin_bswap64(m);
   e = __builtin_bswap64(e);
   n = __builtin_bswap64(n);
-  
+
   // If we reach max queue size, wait for a bit and try again
   while (_dmx->rdm_queue.space() < 2) {
     yield();
@@ -748,7 +748,7 @@ void espDMX::rdmDiscoveryResponse(rdm_data* c) {
   memcpy(&c->packet.Data[6], &m, 6);
   c->packet.TransNo = _dmx->rdm_trans_no++;
   rdmSendCommand(c);
-  
+
   // Send command for upper half
   memcpy(c->packet.Data, &n, 6);
   memcpy(&c->packet.Data[6], &e, 6);
@@ -758,13 +758,13 @@ void espDMX::rdmDiscoveryResponse(rdm_data* c) {
 
 void espDMX::rdmMuteResponse(rdm_data* c) {
   _dmx->rdm_response.endianFlip();
-  
+
   // Check for correct length & ACK response
   if (_dmx->rx_pos > 15) {
     if (c->packet.DestMan == _dmx->rdm_response.packet.SourceMan && c->packet.DestDev == _dmx->rdm_response.packet.SourceDev && _dmx->rdm_response.packet.ResponseType == E120_RESPONSE_TYPE_ACK) {
       uint16_t checkSum = 0;
       uint8_t x = 0;
-      
+
       for (; x < _dmx->rdm_response.packet.Length; x++)
         checkSum += _dmx->rdm_response.buffer[x];
 
@@ -772,11 +772,11 @@ void espDMX::rdmMuteResponse(rdm_data* c) {
 
       // Check the checksum
       if (_dmx->rdm_response.buffer[x] == (checkSum >> 8) && _dmx->rdm_response.buffer[x+1] == (checkSum & 0xFF)) {
-        
+
         // Is the device already in our UID list
         for (uint16_t x = 0; x < _dmx->tod_size; x++) {
           if (_dmx->todManID[x] == _dmx->rdm_response.packet.SourceMan && _dmx->todDevID[x] == _dmx->rdm_response.packet.SourceDev) {
-            
+
             if (x == _dmx->rdm_discovery_pos)
               _dmx->rdm_discovery_pos++;
 
@@ -799,7 +799,7 @@ void espDMX::rdmMuteResponse(rdm_data* c) {
 
 
   // No response received
-  
+
   } else {
     // Delete devices from TOD if they didn't respond
     for (uint16_t x = 0; x < _dmx->tod_size; x++) {
@@ -813,12 +813,12 @@ void espDMX::rdmMuteResponse(rdm_data* c) {
 
         _dmx->tod_size--;
         _dmx->tod_changed = true;
-      
+
         _dmx->rdm_discovery_pos = 0;
 
         _dmx->todManID = (uint16_t*)realloc(_dmx->todManID, _dmx->tod_size * sizeof(uint16_t));
         _dmx->todDevID = (uint32_t*)realloc(_dmx->todDevID, _dmx->tod_size * sizeof(uint32_t));
-      
+
         return;
       }
     }
@@ -842,7 +842,7 @@ void espDMX::rdmRXTimeout() {
 
   // Get remaining data
   rdmReceived();
-  
+
   _dmx->state = DMX_STOP;
   digitalWrite(_dmx->dirPin, HIGH);
 
@@ -863,7 +863,7 @@ void espDMX::rdmRXTimeout() {
     } else if (c.packet.PID == E120_DISC_UN_MUTE) {
       // There shouldn't be a response to un mute commands
       return;
-    } 
+    }
   }
 
   if (_dmx->rdmCallBack != NULL)
@@ -873,7 +873,7 @@ void espDMX::rdmRXTimeout() {
 void espDMX::rdmEnable(uint16_t ManID, uint32_t DevID) {
   if (_dmx == 0 || _dmx->dirPin == 255 || dmx_input)
     return;
-  
+
 
     // RDM Variables
   _dmx->rx_pos = 0;
@@ -892,10 +892,10 @@ void espDMX::rdmEnable(uint16_t ManID, uint32_t DevID) {
 
   // Setup direction pin
   digitalWrite(_dmx->dirPin, HIGH);
-  
+
   // Enable RX pin (same for both universes)
   pinMode(3, SPECIAL);
-  
+
   _dmx->rdm_source_man = ManID;
   _dmx->rdm_source_dev = DevID;
 
@@ -912,21 +912,21 @@ void espDMX::rdmDisable() {
   }
 
   _dmx->rdm_enable = false;
-  
+
   digitalWrite(_dmx->dirPin, HIGH);
 }
 
 uint8_t espDMX::todStatus() {
   if (_dmx == 0 || !_dmx->rdm_enable)
     return false;
-  
+
   return _dmx->tod_status;
 }
 
 uint16_t espDMX::todCount() {
   if (_dmx == 0 || !_dmx->rdm_enable)
     return false;
-  
+
   return _dmx->tod_size;
 }
 
@@ -963,14 +963,14 @@ uint32_t espDMX::todDev(uint16_t n) {
 void espDMX::rdmSetCallBack(rdmCallBackFunc callback) {
   if (_dmx == 0)
     return;
-    
+
   _dmx->rdmCallBack = callback;
 }
 
 void espDMX::todSetCallBack(todCallBackFunc callback) {
   if (_dmx == 0)
     return;
-    
+
   _dmx->todCallBack = callback;
 }
 
@@ -1014,10 +1014,10 @@ void espDMX::dmxIn(bool doIn) {
 
     dmx_interrupt_disarm(_dmx);
     rdmPause(true);
-      
+
     // Turn RX pin into UART mode
     pinMode(3, SPECIAL);
-    
+
     // If dirPin is specified then set to in direction
     if (_dmx->dirPin != 255) {
       pinMode(_dmx->dirPin, OUTPUT);
@@ -1030,17 +1030,17 @@ void espDMX::dmxIn(bool doIn) {
     dmx_input = true;
     rxUser = _dmx->dmx_nr;
     _dmx->state = DMX_RX_IDLE;
-  
+
     noInterrupts();
 
     // UART at 250k for DMX data
     USD(0) = (ESP8266_CLOCK / DMX_TX_BAUD);
     USC0(0) = DMX_TX_CONF;
     USC1(0) = (1 << UCFFT);	// RX Fifo full threshold
-  
+
     rx_flush();                   // flush rx buffer
     USIC(0) = 0x1ff;              // clear all interrupt flags
-  
+
     // Enable RX Fifo Full, Break Detect & Frame Error Interupts
     USIE(0) |= (1 << UIFF) | (1 << UIBD) | (1 << UIFR);
 
@@ -1056,7 +1056,7 @@ void espDMX::dmxIn(bool doIn) {
 
     // Disable RX Fifo Full, Break Detect & Frame Error Interupts
     USIE(0) &= ~((1 << UIFF) | (1 << UIBD) | (1 << UIFR));
-    
+
     if (_dmx->dirPin != 255) {
       pinMode(_dmx->dirPin, OUTPUT);
       digitalWrite(_dmx->dirPin, HIGH);
@@ -1066,7 +1066,7 @@ void espDMX::dmxIn(bool doIn) {
     memset(_dmx->data, 0, 512);
     memset(_dmx->data1, 0, 512);
     _dmx->numChans = 0;
-    
+
     _dmx->isInput = false;
     dmx_input = false;
     rdmPause(false);
@@ -1076,13 +1076,13 @@ void espDMX::dmxIn(bool doIn) {
 void espDMX::setInputCallback(inputCallBackFunc callback) {
   if (_dmx == 0)
     return;
-  
+
   _dmx->inputCallBack = callback;
 }
 
 void ICACHE_RAM_ATTR espDMX::dmxReceived(uint8_t c) {
   switch ( _dmx->state ) {
-  
+
     case DMX_RX_BREAK:
       if ( c == 0 ) {                     //start code == zero (DMX)
         _dmx->state = DMX_RX_DATA;
@@ -1092,7 +1092,7 @@ void ICACHE_RAM_ATTR espDMX::dmxReceived(uint8_t c) {
         _dmx->state = DMX_RX_IDLE;
       }
       break;
-      
+
     case DMX_RX_DATA:
       _dmx->data1[_dmx->rx_pos++] = c;
       if ( _dmx->rx_pos >= 512 ) {
@@ -1105,7 +1105,7 @@ void ICACHE_RAM_ATTR espDMX::dmxReceived(uint8_t c) {
 void ICACHE_RAM_ATTR espDMX::inputBreak(void) {
   if (_dmx == 0)
     return;
-  
+
   _dmx->state = DMX_RX_BREAK;
 
   // Double buffer switch
@@ -1191,19 +1191,19 @@ void espDMX::handler() {
 
     // Allow last channel to be fully sent
     delayMicroseconds(44);
-    
+
     // BREAK of ~120us
     pinMode(_dmx->txPin, OUTPUT);
     digitalWrite(_dmx->txPin, LOW);
     delayMicroseconds(118);
-    
+
     // MAB of ~12us
     digitalWrite(_dmx->txPin, HIGH);
     delayMicroseconds(7);
-    
+
     // Change pin to UART mode
     pinMode(_dmx->txPin, SPECIAL);
-    
+
     // Empty FIFO
     dmx_flush(_dmx);
 
@@ -1219,7 +1219,7 @@ void espDMX::handler() {
 
       // DMX Start Code 0
       USF(_dmx->dmx_nr) = 0;
-      
+
     } else if (_dmx->state == RDM_START) {
 
       _dmx->state = RDM_TX;
@@ -1240,7 +1240,7 @@ void espDMX::fillTX(void) {
   uint16_t fifoRoom = dmx_get_tx_fifo_room(_dmx) - 3;
 
   uint16_t txSize = _dmx->txSize - _dmx->txChan;
-  txSize = (txSize > fifoRoom) ? fifoRoom : txSize;   
+  txSize = (txSize > fifoRoom) ? fifoRoom : txSize;
 
   for(; txSize; --txSize)
     USF(_dmx->dmx_nr) = _dmx->data1[_dmx->txChan++];
