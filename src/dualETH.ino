@@ -41,7 +41,8 @@ extern "C" {
 #define ESTA_MAN 0x7D00
 #define ESTA_DEV 0xEE000000
 
-#define DMX_DIR_A 16
+#define DMX_DIR_A 15
+#define DMX_DIR_B 16
 #define DMX_TX_A 1
 #define DMX_TX_B 2
 
@@ -66,6 +67,8 @@ extern "C" {
 #define YELLOW 0x0000FFFF
 #define ORANGE 0x0000FF33
 #define STATUS_DIM 0x04
+
+#define ETHERNET_CS 5
 
 byte mac[6] = {
   0xBC, 0xFF, 0x4D, 0x45, 0x61, 0x0D
@@ -107,7 +110,7 @@ void setup(void) {
   digitalWrite(STATUS_LED_PIN, LOW);
   delay(10);
 
-  Ethernet.init(15);
+  Ethernet.init(ETHERNET_CS);
 
   setStatusLed(STATUS_LED_S, CYAN);
   doStatusLedOutput();
