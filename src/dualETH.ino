@@ -1,5 +1,5 @@
 /*
-dualETH Ethernet ArtNet Node 
+dualETH Ethernet ArtNet Node
 
 Base Code Copyright (c) 2016, Matthew Tong
 https://github.com/mtongnz/
@@ -17,7 +17,7 @@ If not, see http://www.gnu.org/licenses/
 */
 
 #include <SPI.h>
-#include <EthernetLarge.h>
+#include <Ethernet.h>
 #include <EthernetWebServer.h>
 #include <ArduinoJson.h>
 #include <EEPROM.h>
