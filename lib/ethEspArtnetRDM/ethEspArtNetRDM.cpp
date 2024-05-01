@@ -20,7 +20,7 @@ If not, see http://www.gnu.org/licenses/
 
 #include "ethEspArtNetRDM.h"
 
-#include <Ethernet.h>
+#include <EthernetLarge.h>
 #include <EthernetUdp.h>
 extern "C" {
 #include "mem.h"

@@ -20,7 +20,7 @@ If not, see http://www.gnu.org/licenses/
 #ifndef espArtNetRDM_h
 #define espArtNetRDM_h
 
-#include <Ethernet.h>
+#include <EthernetLarge.h>
 #include <EthernetUdp.h>
 
 extern "C" {
