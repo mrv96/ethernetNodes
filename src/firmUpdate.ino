@@ -1,5 +1,5 @@
 /*
-dualETH Ethernet ArtNet Node 
+dualETH Ethernet ArtNet Node
 
 Base Code Copyright (c) 2016, Matthew Tong
 https://github.com/mtongnz/
@@ -30,7 +30,7 @@ void webFirmwareUpdate() {
 void webFirmwareUpload() {
   String reply = "";
   ethernetHTTPUpload& upload = webServer.upload();
-    
+
   if(upload.status == UPLOAD_FILE_START){
     uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
     if(!Update.begin(maxSketchSpace)){//start with max available size
@@ -40,16 +40,16 @@ void webFirmwareUpload() {
     if(Update.write(upload.buf, upload.currentSize) != upload.currentSize){
       reply = "{\"success\":0,\"message\":\"Failed to save\"}";
     }
-    
+
   } else if(upload.status == UPLOAD_FILE_END){
-    if(Update.end(true)){ 
+    if(Update.end(true)){
       reply = "{\"success\":1,\"message\":\"Success: Device Restarting\"}";
     } else {
       reply = "{\"success\":0,\"message\":\"Unknown Error\"}";
     }
   }
   yield();
-  
+
   if (reply.length() > 0) {
     webServer.sendHeader("Connection", "close");
     webServer.sendHeader("Access-Control-Allow-Origin", "*");
