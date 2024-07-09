@@ -1,4 +1,4 @@
-#include "ethrdmFIFO.h"
+#include "rdmFIFO.h"
 
 rdmFIFO::rdmFIFO(void) {
   init();
