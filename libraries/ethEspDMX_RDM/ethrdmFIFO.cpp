@@ -1,4 +1,4 @@
-#include "rdmFIFO.h"
+#include "ethrdmFIFO.h"
 
 rdmFIFO::rdmFIFO(void) {
   init();
@@ -86,7 +86,7 @@ rdm_data* rdmFIFO::resize(uint8_t s) {
   
   if (s > RDMfifoAllocated) {  // RDMfifoSize) {
     if (!(content[s-1] = (rdm_data*)malloc(sizeof(rdm_data))))
-      return false;
+      return NULL;
     RDMfifoAllocated = s;
   }
 

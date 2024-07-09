@@ -1,7 +1,10 @@
 /*
-ESP8266_ArtNetNode v2.0.0
-Copyright (c) 2016, Matthew Tong
-https://github.com/mtongnz/ESP8266_ArtNetNode_v2
+dualETH Ethernet ArtNet Node 
+
+Base Code Copyright (c) 2016, Matthew Tong
+https://github.com/mtongnz/
+Ethernet Implementation Copyright (c) 2023, expanseElectronics Ltd
+https://github.com/expanseElectronics/
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
 License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -13,15 +16,14 @@ You should have received a copy of the GNU General Public License along with thi
 If not, see http://www.gnu.org/licenses/
 */
 
-
 #ifndef ws2812Driver_h
 #define ws2812Driver_h
 
-#include <ESP8266WiFi.h>
+#include <EthernetLarge.h>
 
 #define PIX_MAX_BUFFER_SIZE 2040
 
-#define PIX_LATCH_TIME 25       // 25 works for most
+#define PIX_LATCH_TIME 25     
 
 enum conf_type {
   WS2812_800KHZ,

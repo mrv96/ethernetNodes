@@ -1,7 +1,10 @@
 /*
-espDMX v2 library
-Copyright (c) 2016, Matthew Tong
-https://github.com/mtongnz/espDMX
+dualETH Ethernet ArtNet Node 
+
+Base Code Copyright (c) 2016, Matthew Tong
+https://github.com/mtongnz/
+Ethernet Implementation Copyright (c) 2023, expanseElectronics Ltd
+https://github.com/expanseElectronics/
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
 License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -9,7 +12,6 @@ later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License along with this program.
 If not, see http://www.gnu.org/licenses/
 */
@@ -20,7 +22,7 @@ If not, see http://www.gnu.org/licenses/
 #define DMX_MAX_BYTES_PER_INT 3		// How many bytes to send per interrupt
 #define DMX_TX_CONF           0x3c   	// SERIAL_8N2
 #define DMX_TX_BAUD           250000
-#define DMX_FULL_UNI_TIMING   800   	// How often to output full 512 channel universe (in milliseconds)
+#define DMX_FULL_UNI_TIMING   1000   	// How often to output full 512 channel universe (in milliseconds)
 #define DMX_NO_LED            200
 #define DMX_MIN_CHANS         30     	// Minimum channels output = this + DMX_ADD_CHANS
 #define DMX_ADD_CHANS         30     	// Add extra buffer to the number of channels output
@@ -47,9 +49,9 @@ extern "C" {
 #include "Stream.h"
 
 
-#include "rdm.h"
-#include "rdmDataTypes.h"
-#include "rdmFIFO.h"
+#include "ethRDM.h"
+#include "ethrdmDataTypes.h"
+#include "ethrdmFIFO.h"
 
 
 typedef void (*rdmCallBackFunc)(rdm_data*);

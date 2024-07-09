@@ -1,7 +1,10 @@
 /*
-ESP8266_ArtNetNode v2.0.0
-Copyright (c) 2016, Matthew Tong
-https://github.com/mtongnz/ESP8266_ArtNetNode_v2
+dualETH Ethernet ArtNet Node 
+
+Base Code Copyright (c) 2016, Matthew Tong
+https://github.com/mtongnz/
+Ethernet Implementation Copyright (c) 2023, expanseElectronics Ltd
+https://github.com/expanseElectronics/
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
 License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -13,17 +16,10 @@ You should have received a copy of the GNU General Public License along with thi
 If not, see http://www.gnu.org/licenses/
 */
 
-
-
-/* webFirmwareUpdate()
- *  display update status after firmware upload and restart
- */
 void webFirmwareUpdate() {
-  // Generate the webpage from the variables above
   String fail = "{\"success\":0,\"message\":\"Unknown Error\"}";
   String ok = "{\"success\":1,\"message\":\"Success: Device restarting\"}";
 
-  // Send to the client
   webServer.sendHeader("Connection", "close");
   webServer.sendHeader("Access-Control-Allow-Origin", "*");
   webServer.send(200, "application/json", (Update.hasError()) ? fail : ok);
@@ -31,14 +27,9 @@ void webFirmwareUpdate() {
   doReboot = true;
 }
 
-
-
-/* webFirmwareUpload()
- *  handle firmware upload and update
- */
 void webFirmwareUpload() {
   String reply = "";
-  HTTPUpload& upload = webServer.upload();
+  ethernetHTTPUpload& upload = webServer.upload();
     
   if(upload.status == UPLOAD_FILE_START){
     uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
@@ -51,7 +42,7 @@ void webFirmwareUpload() {
     }
     
   } else if(upload.status == UPLOAD_FILE_END){
-    if(Update.end(true)){ //true to set the size to the current progress
+    if(Update.end(true)){ 
       reply = "{\"success\":1,\"message\":\"Success: Device Restarting\"}";
     } else {
       reply = "{\"success\":0,\"message\":\"Unknown Error\"}";
@@ -59,7 +50,6 @@ void webFirmwareUpload() {
   }
   yield();
   
-  // Send to the client
   if (reply.length() > 0) {
     webServer.sendHeader("Connection", "close");
     webServer.sendHeader("Access-Control-Allow-Origin", "*");

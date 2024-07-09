@@ -2,8 +2,8 @@
 #define rdmFIFO_h
 
 #include "Arduino.h"
-#include "rdm.h"
-#include "rdmDataTypes.h"
+#include "ethRDM.h"
+#include "ethrdmDataTypes.h"
 
 #define RDM_MAX_RDM_QUEUE 30
 

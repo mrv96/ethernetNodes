@@ -1,12 +1,15 @@
-
 /*
-espArtNetRDM v1 (pre-release) library
-Copyright (c) 2016, Matthew Tong
+dualETH Ethernet ArtNet Node 
+
+Base Code Copyright (c) 2016, Matthew Tong
 https://github.com/mtongnz/
-Modified from https://github.com/forkineye/E131/blob/master/E131.h
+Ethernet Implementation Copyright (c) 2023, expanseElectronics Ltd
+https://github.com/expanseElectronics/
+
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
 License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
 later version.
+
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.
@@ -14,18 +17,18 @@ If not, see http://www.gnu.org/licenses/
 */
 
 
-
 #ifndef espArtNetRDM_h
 #define espArtNetRDM_h
 
-#include <ESP8266WiFi.h>
-#include <WiFiUdp.h>
+#include <EthernetLarge.h>
+#include <EthernetUdp.h>
+
 extern "C" {
 #include "mem.h"
 }
-#include "rdmDataTypes.h"
-#include "artnet.h"
-#include "e131.h"
+#include "ethrdmDataTypes.h"
+#include "ethartnet.h"
+#include "ethe131.h"
 
 
 typedef void (*artDMXCallBack)(uint8_t, uint8_t, uint16_t, bool);
@@ -273,8 +276,8 @@ class esp8266ArtNetRDM {
     uint8_t _dmxSeqID = 0;
     uint8_t e131Count = 0;	// the number of e131 ports currently open
 
-    WiFiUDP eUDP;
-    WiFiUDP fUDP;
+    EthernetUDP eUDP;
+    EthernetUDP fUDP;
 };
 
 
