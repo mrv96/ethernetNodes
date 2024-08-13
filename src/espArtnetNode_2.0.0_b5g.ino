@@ -30,9 +30,9 @@ These prizes will be based on the first person to submit a solution that I judge
 This competition will open to the general public a couple of weeks after the private code release to supporters.
 */
 
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-#include <ESP8266WebServer.h>
+#include <SPI.h>
+#include <EthernetLarge.h>
+#include <EthernetWebServer.h>
 #include <ArduinoJson.h>
 #include <EEPROM.h>
 #include <FS.h>
@@ -62,8 +62,7 @@ extern "C" {
 #define ESTA_DEV 0xEE000000  // RDM Device ID (used with Man Code to make 48bit UID)
 
 
-
-
+#define SPI_CS 15
 
 
 #ifdef ESP_01
@@ -117,7 +116,7 @@ uint8_t statusLedData[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 uint32_t statusTimer = 0;
 
 esp8266ArtNetRDM artRDM;
-ESP8266WebServer webServer(80);
+EthernetWebServer webServer(80);
 DynamicJsonBuffer jsonBuffer;
 ws2812Driver pixDriver;
 File fsUploadFile;
@@ -173,6 +172,8 @@ void setup(void) {
     setStatusLed(STATUS_LED_S, PINK);
     doStatusLedOutput();
   #endif
+
+  Ethernet.init(SPI_CS);
 
   wifi_set_sleep_type(NONE_SLEEP_T);
   bool resetDefaults = false;
