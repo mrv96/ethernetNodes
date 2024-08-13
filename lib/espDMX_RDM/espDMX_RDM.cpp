@@ -386,7 +386,6 @@ void espDMX::begin(uint8_t dir, byte* buf) {
     _dmx->ownBuffer = 0;
 
     system_set_os_print(0);
-    ets_install_putc1((void *) &uart_ignore_char);
 
     // Initialize variables
     _dmx->dmx_nr = _dmx_nr;
