@@ -1,20 +1,3 @@
-
-/*
-espArtNetRDM v1 (pre-release) library
-Copyright (c) 2016, Matthew Tong
-https://github.com/mtongnz/
-Modified from https://github.com/forkineye/E131/blob/master/E131.h
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
-later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with this program.
-If not, see http://www.gnu.org/licenses/
-*/
-
-
-
 #ifndef rdmDataTypes_h
 #define rdmDataTypes_h
 
@@ -28,7 +11,7 @@ enum rdm_tod_state {
 
 union rdm_data_ {
   struct {
-    uint16_t StartCode;  // Start Code 0xCC01 for RDM
+    uint16_t StartCode;    // Start Code 0xCC01 for RDM
     byte     Length;       // packet length
     uint16_t DestMan;
     uint32_t DestDev;
@@ -37,20 +20,20 @@ union rdm_data_ {
     byte     TransNo;      // transaction number, not checked
     byte     ResponseType; // ResponseType
     byte     MsgCount;     // Message count
-    uint16_t SubDev;       // sub device number (root = 0) 
+    uint16_t SubDev;       // sub device number (root = 0)
     byte     CmdClass;     // command class
-    uint16_t PID;       // parameter ID
+    uint16_t PID;          // parameter ID
     byte     DataLength;   // parameter data length in bytes
     byte     Data[231];    // data byte field
   } __attribute__((packed)) packet;
-  
+
   struct {
     byte headerFE;
     byte headerAA;
     byte maskedDevID[12];
     byte maskedChecksum[4];
   } __attribute__((packed)) discovery;
-  
+
   byte buffer[255];
 
   void endianFlip(void) {
@@ -64,6 +47,12 @@ union rdm_data_ {
     // 32 bit flips
     packet.DestDev = __builtin_bswap32 (packet.DestDev);
     packet.SourceDev = __builtin_bswap32 (packet.SourceDev);
+  }
+
+  void clear(void) {
+    memset(&buffer, 0, 255);
+    //for (uint8_t x = 0; x < 255; x++)
+    //  buffer[x] = 0;
   }
 };
 typedef union rdm_data_ rdm_data;
