@@ -17,7 +17,7 @@ If not, see http://www.gnu.org/licenses/
 
 #include "espArtNetRDM.h"
 
-#include <EthernetLarge.h>
+#include <Ethernet.h>
 #include <EthernetUdp.h>
 extern "C" {
 #include "mem.h"

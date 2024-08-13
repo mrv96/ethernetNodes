@@ -31,7 +31,7 @@ This competition will open to the general public a couple of weeks after the pri
 */
 
 #include <SPI.h>
-#include <EthernetLarge.h>
+#include <Ethernet.h>
 #include <EthernetWebServer.h>
 #include <ArduinoJson.h>
 #include <EEPROM.h>
