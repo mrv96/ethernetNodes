@@ -364,9 +364,7 @@ void wifiStart() {
 
     deviceSettings.ip = Ethernet.localIP();
     deviceSettings.subnet = Ethernet.subnetMask();
-
-    if (deviceSettings.gateway == INADDR_NONE)
-      deviceSettings.gateway = Ethernet.gatewayIP();
+    deviceSettings.gateway = Ethernet.gatewayIP();
   } else {
     Ethernet.begin(MAC_array, deviceSettings.ip, deviceSettings.gateway, deviceSettings.gateway, deviceSettings.subnet);
   }

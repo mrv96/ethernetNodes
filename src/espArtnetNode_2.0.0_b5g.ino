@@ -62,7 +62,7 @@ extern "C" {
 #define ESTA_DEV 0xEE000000  // RDM Device ID (used with Man Code to make 48bit UID)
 
 
-#define SPI_CS 15
+#define SPI_CS 5
 
 
 #ifdef ESP_01
@@ -75,7 +75,7 @@ extern "C" {
   #define WS2812_ALLOW_INT_DOUBLE false
 
 #else
-  #define DMX_DIR_A 5   // D1
+  #define DMX_DIR_A 15  // D1
   #define DMX_DIR_B 16  // D0
   #define DMX_TX_A 1
   #define DMX_TX_B 2
@@ -110,7 +110,7 @@ extern "C" {
 #define STATUS_DIM 0x0F
 
 uint8_t portA[5], portB[5];
-uint8_t MAC_array[6];
+uint8_t MAC_array[6] = {0xBC, 0xFF, 0x4D, 0x45, 0x61, 0x0D};
 uint8_t dmxInSeqID = 0;
 uint8_t statusLedData[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 uint32_t statusTimer = 0;
