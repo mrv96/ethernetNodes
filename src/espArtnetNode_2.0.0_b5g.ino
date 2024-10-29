@@ -197,7 +197,7 @@ void setup(void) {
   SPIFFS.begin();
 
   // Check if SPIFFS formatted
-  if (SPIFFS.exists("/formatted.txt")) {
+  if (!SPIFFS.exists("/formatted.txt")) {
     SPIFFS.format();
 
     File f = SPIFFS.open("/formatted.txt", "w");
