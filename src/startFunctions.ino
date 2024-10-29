@@ -270,8 +270,17 @@ void artStart() {
 void webStart() {
   webServer.on("/", [](){
     artRDM.pause();
-    webServer.send_P(200, typeHTML, mainPage);
+
+    File f = SPIFFS.open("/index.html", "r");
+
+    if (!f)
+      webServer.send(404, "text/plain", "Page not found");
+    else
+      webServer.streamFile(f, typeHTML);
+
+    f.close();
     webServer.sendHeader("Connection", "close");
+
     yield();
     artRDM.begin();
   });
@@ -281,11 +290,10 @@ void webStart() {
 
     File f = SPIFFS.open("/style.css", "r");
 
-    // If no style.css in SPIFFS, send default
     if (!f)
-      webServer.send_P(200, typeCSS, css);
+      webServer.send(404, "text/plain", "Page not found");
     else
-      size_t sent = webServer.streamFile(f, typeCSS);
+      webServer.streamFile(f, typeCSS);
 
     f.close();
     webServer.sendHeader("Connection", "close");
@@ -299,7 +307,14 @@ void webStart() {
   webServer.on("/upload", HTTP_POST, webFirmwareUpdate, webFirmwareUpload);
 
   webServer.on("/style", [](){
-    webServer.send_P(200, typeHTML, cssUploadPage);
+    File f = SPIFFS.open("/css_upload.html", "r");
+
+    if (!f)
+      webServer.send(404, "text/plain", "Page not found");
+    else
+      webServer.streamFile(f, typeCSS);
+
+    f.close();
     webServer.sendHeader("Connection", "close");
   });
 
@@ -334,6 +349,42 @@ void webStart() {
           SPIFFS.rename(upload.filename, "/style.css");
       }
     }
+  });
+
+  webServer.on("/script.js", [](){
+    artRDM.pause();
+
+    File f = SPIFFS.open("/script.js", "r");
+
+    if (!f)
+      webServer.send(404, "text/plain", "Page not found");
+    else
+      webServer.streamFile(f, typeJS);
+
+    f.close();
+    webServer.sendHeader("Connection", "close");
+
+    yield();
+    artRDM.begin();
+  });
+
+  webServer.on("/portb.js", [](){
+    artRDM.pause();
+
+    File f = SPIFFS.open("/portb.js", "r");
+
+#ifdef ONE_PORT
+    if (f)
+      webServer.streamFile(f, typeJS);
+    else
+#endif
+      webServer.send(404, "text/plain", "Page not found");
+
+    f.close();
+    webServer.sendHeader("Connection", "close");
+
+    yield();
+    artRDM.begin();
   });
 
   webServer.onNotFound([]() {
