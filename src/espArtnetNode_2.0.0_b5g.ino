@@ -194,15 +194,15 @@ void setup(void) {
   EEPROM.begin(512);
 
   // Start SPIFFS file system
-  SPIFFS.begin();
+  if (!SPIFFS.begin()) {
+    SPIFFS.format(); // web server contents won't be shown
 
-  // Check if SPIFFS formatted
-  if (!SPIFFS.exists("/formatted.txt")) {
-    SPIFFS.format();
-
-    File f = SPIFFS.open("/formatted.txt", "w");
-    f.print("Formatted");
-    f.close();
+    if (!SPIFFS.begin()) {
+      while (1) {
+        // stay forever here as useless to go further
+        yield();
+      }
+    }
   }
 
   // Load our saved values or store defaults
