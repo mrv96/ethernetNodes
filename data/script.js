@@ -328,4 +328,3 @@ document.onkeydown = function(e) {
   var e = e || window.event;
   if (e.keyCode == 13) sendData();
 };
-menuClick(1);
