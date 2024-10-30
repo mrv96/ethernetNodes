@@ -36,6 +36,7 @@ This competition will open to the general public a couple of weeks after the pri
 #include <ArduinoJson.h>
 #include <EEPROM.h>
 #include <FS.h>
+#include <LittleFS.h>
 #include "store.h"
 #include "espDMX_RDM.h"
 #include "espArtNetRDM.h"
@@ -54,7 +55,7 @@ extern "C" {
 //#define ESP_01              // Un comment for ESP_01 board settings
 //#define NO_RESET            // Un comment to disable the reset button
 
-// Wemos boards use 4M (3M SPIFFS) compiler option
+// Wemos boards use 4M (3M LittleFS) compiler option
 
 
 #define ARTNET_OEM 0x0123    // Artnet OEM Code
@@ -181,11 +182,11 @@ void setup(void) {
   // Start EEPROM
   EEPROM.begin(512);
 
-  // Start SPIFFS file system
-  if (!SPIFFS.begin()) {
-    SPIFFS.format(); // web server contents won't be shown
+  // Start LittleFS file system
+  if (!LittleFS.begin()) {
+    LittleFS.format(); // web server contents won't be shown
 
-    if (!SPIFFS.begin()) {
+    if (!LittleFS.begin()) {
       while (1) {
         // stay forever here as useless to go further
         yield();

@@ -271,7 +271,7 @@ void webStart() {
   webServer.on("/", [](){
     artRDM.pause();
 
-    File f = SPIFFS.open("/index.html", "r");
+    File f = LittleFS.open("/index.html", "r");
 
     if (!f)
       webServer.send(404, "text/plain", "Page not found");
@@ -288,7 +288,7 @@ void webStart() {
   webServer.on("/style.css", [](){
     artRDM.pause();
 
-    File f = SPIFFS.open("/style.css", "r");
+    File f = LittleFS.open("/style.css", "r");
 
     if (!f)
       webServer.send(404, "text/plain", "Page not found");
@@ -307,7 +307,7 @@ void webStart() {
   webServer.on("/upload", HTTP_POST, webFirmwareUpdate, webFirmwareUpload);
 
   webServer.on("/style", [](){
-    File f = SPIFFS.open("/css_upload.html", "r");
+    File f = LittleFS.open("/css_upload.html", "r");
 
     if (!f)
       webServer.send(404, "text/plain", "Page not found");
@@ -319,8 +319,8 @@ void webStart() {
   });
 
   webServer.on("/style_delete", [](){
-    if (SPIFFS.exists("/style.css"))
-      SPIFFS.remove("/style.css");
+    if (LittleFS.exists("/style.css"))
+      LittleFS.remove("/style.css");
 
     webServer.send(200, "text/plain", "style.css deleted.  The default style is now in use.");
     webServer.sendHeader("Connection", "close");
@@ -334,7 +334,7 @@ void webStart() {
     if(upload.status == UPLOAD_FILE_START){
       String filename = upload.filename;
       if(!filename.startsWith("/")) filename = "/"+filename;
-      fsUploadFile = SPIFFS.open(filename, "w");
+      fsUploadFile = LittleFS.open(filename, "w");
       filename = String();
 
     } else if(upload.status == UPLOAD_FILE_WRITE){
@@ -346,7 +346,7 @@ void webStart() {
         fsUploadFile.close();
 
         if (upload.filename != "/style.css")
-          SPIFFS.rename(upload.filename, "/style.css");
+          LittleFS.rename(upload.filename, "/style.css");
       }
     }
   });
@@ -354,7 +354,7 @@ void webStart() {
   webServer.on("/script.js", [](){
     artRDM.pause();
 
-    File f = SPIFFS.open("/script.js", "r");
+    File f = LittleFS.open("/script.js", "r");
 
     if (!f)
       webServer.send(404, "text/plain", "Page not found");
@@ -371,7 +371,7 @@ void webStart() {
   webServer.on("/portb.js", [](){
     artRDM.pause();
 
-    File f = SPIFFS.open("/portb.js", "r");
+    File f = LittleFS.open("/portb.js", "r");
 
 #ifdef ONE_PORT
     if (f)
