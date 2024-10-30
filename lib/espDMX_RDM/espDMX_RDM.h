@@ -20,7 +20,7 @@ If not, see http://www.gnu.org/licenses/
 #define DMX_MAX_BYTES_PER_INT 3		// How many bytes to send per interrupt
 #define DMX_TX_CONF           0x3c   	// SERIAL_8N2
 #define DMX_TX_BAUD           250000
-#define DMX_FULL_UNI_TIMING   800   	// How often to output full 512 channel universe (in milliseconds)
+#define DMX_FULL_UNI_TIMING   1000   	// How often to output full 512 channel universe (in milliseconds)
 #define DMX_NO_LED            200
 #define DMX_MIN_CHANS         30     	// Minimum channels output = this + DMX_ADD_CHANS
 #define DMX_ADD_CHANS         30     	// Add extra buffer to the number of channels output

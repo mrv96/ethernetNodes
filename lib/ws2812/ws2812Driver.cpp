@@ -97,7 +97,7 @@ uint32_t ws2812Driver::getPixel(uint8_t port) {
   uint16_t chan = _pixels[port] * 3;
 
   // ws2812 is GRB ordering - return RGB
-  return ((b[chan + 1] << 16) | (b[chan] << 8) | (b[chan+2]));
+  return ((b[chan + 1] << 16) | (b[chan] << 8) | (b[chan + 2]));
 }
 
 uint16_t ws2812Driver::numPixels(uint8_t port) {
