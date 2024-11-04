@@ -3,13 +3,13 @@ var num = 0;
 var err = 0;
 var o = document.getElementsByName('sections');
 var s = document.getElementsByName('save');
-for (var i = 0, e; e = s[i++];) e.addEventListener('click', function() {
+for (var i = 0, e; e = s[i++];) e.addEventListener('click', function () {
   sendData();
 });
 var u = document.getElementById('fUp');
 var um = document.getElementById('uploadMsg');
 var fileSelect = document.getElementById('update');
-u.addEventListener('click', function() {
+u.addEventListener('click', function () {
   uploadPrep()
 });
 
@@ -18,7 +18,7 @@ function uploadPrep() {
   u.disabled = !0;
   u.value = 'Preparing Device…';
   var x = new XMLHttpRequest();
-  x.onreadystatechange = function() {
+  x.onreadystatechange = function () {
     if (x.readyState == XMLHttpRequest.DONE) {
       try {
         var r = JSON.parse(x.response)
@@ -43,9 +43,9 @@ function uploadPrep() {
 }
 
 function uploadWait() {
-  setTimeout(function() {
+  setTimeout(function () {
     var z = new XMLHttpRequest();
-    z.onreadystatechange = function() {
+    z.onreadystatechange = function () {
       if (z.readyState == XMLHttpRequest.DONE) {
         try {
           var r = JSON.parse(z.response)
@@ -67,12 +67,12 @@ function uploadWait() {
     z.send('{"doUpdate":2,"success":1}')
   }, 1000)
 }
-var upload = function() {
+var upload = function () {
   u.value = 'Uploading… 0%';
   var data = new FormData();
   data.append('update', fileSelect.files[0]);
   var x = new XMLHttpRequest();
-  x.onreadystatechange = function() {
+  x.onreadystatechange = function () {
     if (x.readyState == 4) {
       try {
         var r = JSON.parse(x.response)
@@ -85,7 +85,7 @@ var upload = function() {
       console.log(r.success + ': ' + r.message);
       if (r.success == 1) {
         u.value = r.message;
-        setTimeout(function() {
+        setTimeout(function () {
           location.reload()
         }, 15000)
       } else {
@@ -95,7 +95,7 @@ var upload = function() {
       }
     }
   };
-  x.upload.addEventListener('progress', function(e) {
+  x.upload.addEventListener('progress', function (e) {
     var p = Math.ceil((e.loaded / e.total) * 100);
     console.log('Progress: ' + p + '%');
     if (p < 100) u.value = 'Uploading... ' + p + '%';
@@ -115,7 +115,7 @@ function reboot() {
   o[0].className = 'show';
   err = 0;
   var x = new XMLHttpRequest();
-  x.onreadystatechange = function() {
+  x.onreadystatechange = function () {
     if (x.readyState == 4) {
       try {
         var r = JSON.parse(x.response);
@@ -129,7 +129,7 @@ function reboot() {
         o[0].childNodes[0].innerHTML = 'Reboot Failed';
         o[0].childNodes[1].innerHTML = 'Something went wrong and the device didn\'t respond correctly. Please try again.';
       }
-      setTimeout(function() {
+      setTimeout(function () {
         location.reload();
       }, 5000);
     }
@@ -170,7 +170,7 @@ function sendData() {
   }
   d['success'] = 1;
   var x = new XMLHttpRequest();
-  x.onreadystatechange = function() {
+  x.onreadystatechange = function () {
     handleAJAX(x);
   };
   x.open('POST', '/ajax');
@@ -182,14 +182,14 @@ function sendData() {
 function menuClick(n) {
   if (err == 1) return;
   num = n;
-  setTimeout(function() {
+  setTimeout(function () {
     if (cl == num || err == 1) return;
     o[cl].className = 'hide';
     o[0].className = 'show';
     cl = 0;
   }, 100);
   var x = new XMLHttpRequest();
-  x.onreadystatechange = function() {
+  x.onreadystatechange = function () {
     handleAJAX(x);
   };
   x.open('POST', '/ajax');
@@ -223,7 +223,7 @@ function handleAJAX(x) {
           e.value = response['message'];
           e.className = 'showMessage'
         }
-        setTimeout(function() {
+        setTimeout(function () {
           for (var i = 0, e; e = s[i++];) {
             e.value = 'Save Changes';
             e.className = ''
@@ -317,13 +317,13 @@ function handleAJAX(x) {
 var update = document.getElementById('update');
 var label = update.nextElementSibling;
 var labelVal = label.innerHTML;
-update.addEventListener('change', function(e) {
+update.addEventListener('change', function (e) {
   var fileName = e.target.value.split('\\').pop();
   if (fileName) label.querySelector('span').innerHTML = fileName;
   else label.innerHTML = labelVal;
   update.blur();
 });
-document.onkeydown = function(e) {
+document.onkeydown = function (e) {
   if (cl < 2 || cl > 6) return;
   var e = e || window.event;
   if (e.keyCode == 13) sendData();
