@@ -5,6 +5,10 @@ from pathlib import Path
 Import("env")
 
 
+DATA_DIR = Path(env.subst('$PROJECT_DATA_DIR'))
+BUILD_DATA_DIR = Path(env.subst('$BUILD_DIR')) / DATA_DIR.name
+
+
 def rm_lib_src(libdir:str):
     lib = Path(env.get('PROJECT_LIBDEPS_DIR')) / env.get('PIOENV') / libdir
     piopm = lib / '.piopm'
@@ -58,3 +62,39 @@ for package in platform.dump_used_packages():
         surround_with_ifndef(package_dir/'libraries'/'Ethernet'/'src'/'Ethernet.h', 'MAX_SOCK_NUM')
         surround_with_ifndef(package_dir/'cores'/'esp8266'/'wl_definitions.h', 'MAX_SOCK_NUM')
         break
+
+
+def minify_web_sources(source, target, env):
+    try:
+        import minify_html, rcssmin, rjsmin
+    except ModuleNotFoundError:
+        env.Execute("$PYTHONEXE -m pip install minify_html rcssmin rjsmin")
+        import minify_html, rcssmin, rjsmin
+
+    env.Execute(Delete(BUILD_DATA_DIR))
+    BUILD_DATA_DIR.mkdir()
+
+    for p in DATA_DIR.rglob('*.html'):
+        new_p = BUILD_DATA_DIR / p.relative_to(DATA_DIR)
+        new_p.write_text(
+            minify_html.minify(
+                p.read_text(),
+                do_not_minify_doctype=True,
+                ensure_spec_compliant_unquoted_attribute_values=True,
+                keep_spaces_between_attributes=True,
+                minify_css=True,
+                minify_js=True,
+            )
+        )
+
+    for p in DATA_DIR.rglob('*.css'):
+        new_p = BUILD_DATA_DIR / p.relative_to(DATA_DIR)
+        new_p.write_text(rcssmin.cssmin(p.read_text()))
+
+    for p in DATA_DIR.rglob('*.js'):
+        new_p = BUILD_DATA_DIR / p.relative_to(DATA_DIR)
+        new_p.write_text(rjsmin.jsmin(p.read_text()))
+
+
+env.Replace(PROJECT_DATA_DIR=BUILD_DATA_DIR)
+env.AddPreAction("buildfs", minify_web_sources)
