@@ -98,3 +98,5 @@ def minify_web_sources(source, target, env):
 
 env.Replace(PROJECT_DATA_DIR=BUILD_DATA_DIR)
 env.AddPreAction("buildfs", minify_web_sources)
+env.AddPreAction("uploadfs", minify_web_sources)
+env.AddPreAction("uploadfsota", minify_web_sources)
