@@ -57,7 +57,6 @@ def minify_web_sources(source, target, env):
         env.Execute("$PYTHONEXE -m pip install minify_html rcssmin rjsmin")
         import minify_html, rcssmin, rjsmin
 
-    env.Execute(Delete(BUILD_DATA_DIR))
     BUILD_DATA_DIR.mkdir()
 
     for p in DATA_DIR.rglob('*.html'):
@@ -97,4 +96,10 @@ for package in platform.dump_used_packages():
 
 
 env.Replace(PROJECT_DATA_DIR=BUILD_DATA_DIR)
-env.AddPreAction(str(Path("$BUILD_DIR", "${ESP8266_FS_IMAGE_NAME}.bin")), minify_web_sources)
+env.AddPreAction(
+    str(Path("$BUILD_DIR", "${ESP8266_FS_IMAGE_NAME}.bin")),
+    [
+        Delete(BUILD_DATA_DIR),
+        minify_web_sources,
+    ]
+)
