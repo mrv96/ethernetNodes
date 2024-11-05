@@ -50,20 +50,6 @@ def surround_with_ifndef(file:Path, define_name:str):
         f.write(''.join(lines))
 
 
-# Remove EthernetWebServer unneeded deps to avoid build conflicts
-rm_lib_src('Ethernet_Generic')
-
-
-# Allow MAX_SOCK_NUM GCC define surrounding C MAX_SOCK_NUM defines with #ifndef/endif
-platform = env.PioPlatform()
-for package in platform.dump_used_packages():
-    if 'framework' in package['name']:
-        package_dir = Path(platform.get_package_dir(package['name']))
-        surround_with_ifndef(package_dir/'libraries'/'Ethernet'/'src'/'Ethernet.h', 'MAX_SOCK_NUM')
-        surround_with_ifndef(package_dir/'cores'/'esp8266'/'wl_definitions.h', 'MAX_SOCK_NUM')
-        break
-
-
 def minify_web_sources(source, target, env):
     try:
         import minify_html, rcssmin, rjsmin
@@ -96,7 +82,19 @@ def minify_web_sources(source, target, env):
         new_p.write_text(rjsmin.jsmin(p.read_text()))
 
 
+# Remove EthernetWebServer unneeded deps to avoid build conflicts
+rm_lib_src('Ethernet_Generic')
+
+
+# Allow MAX_SOCK_NUM GCC define surrounding C MAX_SOCK_NUM defines with #ifndef/endif
+platform = env.PioPlatform()
+for package in platform.dump_used_packages():
+    if 'framework' in package['name']:
+        package_dir = Path(platform.get_package_dir(package['name']))
+        surround_with_ifndef(package_dir/'libraries'/'Ethernet'/'src'/'Ethernet.h', 'MAX_SOCK_NUM')
+        surround_with_ifndef(package_dir/'cores'/'esp8266'/'wl_definitions.h', 'MAX_SOCK_NUM')
+        break
+
+
 env.Replace(PROJECT_DATA_DIR=BUILD_DATA_DIR)
-env.AddPreAction("buildfs", minify_web_sources)
-env.AddPreAction("uploadfs", minify_web_sources)
-env.AddPreAction("uploadfsota", minify_web_sources)
+env.AddPreAction(str(Path("$BUILD_DIR", "${ESP8266_FS_IMAGE_NAME}.bin")), minify_web_sources)
